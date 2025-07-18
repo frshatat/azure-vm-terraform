@@ -16,9 +16,4 @@ resource "azurerm_key_vault_secret" "secret" {
   key_vault_id = azurerm_key_vault.main.id
 }
 
-resource "azurerm_key_vault_secret" "ado_pat" {
-  name         = "ado-pat"
-  value        = var.azure_devops_pat
-  key_vault_id = azurerm_key_vault.main.id
-}
 

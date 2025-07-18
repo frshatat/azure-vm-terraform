@@ -1,3 +1,11 @@
+resource "azurerm_public_ip" "main" {
+  name                = "${var.vm_name}-public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
 resource "azurerm_network_interface" "main" {
   name                = "${var.vm_name}-nic"
   location            = var.location
@@ -5,18 +13,10 @@ resource "azurerm_network_interface" "main" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                    = var.subnet_id
+    subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.main.id
   }
-}
-
-resource "azurerm_public_ip" "main" {
-  name                = "${var.vm_name}-public-ip"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
 }
 
 resource "azurerm_linux_virtual_machine" "main" {
@@ -47,19 +47,4 @@ resource "azurerm_linux_virtual_machine" "main" {
   }
 
   provision_vm_agent = true
-}
-
-resource "azurerm_virtual_machine_extension" "devops_agent" {
-  name                 = "azure-devops-agent"
-  virtual_machine_id   = azurerm_linux_virtual_machine.main.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.1"
-
-  settings = <<SETTINGS
-{
-  "fileUris": ["${var.script_url}"],
-  "commandToExecute": "bash install-ado-agent.sh"
-}
-SETTINGS
 }
