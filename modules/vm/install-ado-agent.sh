@@ -5,7 +5,7 @@ set -e
 PAT=$(az keyvault secret show --vault-name ${KEYVAULT_NAME} --name ado-pat --query value -o tsv)
 
 # Variables (replace YOUR_ORG with your Azure DevOps org URL)
-ORG_URL="https://dev.azure.com/YOUR_ORG"
+ORG_URL="https://dev.azure.com/farisshatat120"
 AGENT_VERSION="2.220.2"
 AGENT_DIR="/home/${ADMIN_USERNAME}/vsts-agent-linux-x64-${AGENT_VERSION}"
 

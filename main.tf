@@ -32,6 +32,7 @@ module "vm" {
   admin_username        = var.admin_username
   ssh_public_key_path   = var.ssh_public_key_path
   subnet_id             = module.network.subnet_id
+  script_url          = "https://raw.githubusercontent.com/frshatat/azure-vm-terraform/refs/heads/main/modules/vm/install-ado-agent.sh"
 }
 
 module "keyvault" {
