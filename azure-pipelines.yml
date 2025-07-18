@@ -1,0 +1,47 @@
+trigger: none  # Only runs manually (no trigger on git push)
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  backend_rg: 'cf-rg'
+  backend_sa: 'cfstoragedev123'
+  backend_container: 'tfstate'
+  backend_key: 'terraform.tfstate'
+  workingDirectory: './'  # Adjust if needed
+
+stages:
+- stage: Terraform
+  displayName: 'Terraform Plan and Apply'
+  jobs:
+  - job: terraform
+    displayName: 'Terraform Job'
+    steps:
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: '1.5.7'
+
+    - script: |
+        cd $(workingDirectory)
+        terraform init \
+          -backend-config="resource_group_name=$(backend_rg)" \
+          -backend-config="storage_account_name=$(backend_sa)" \
+          -backend-config="container_name=$(backend_container)" \
+          -backend-config="key=$(backend_key)"
+      displayName: 'Terraform Init'
+
+    - script: |
+        cd $(workingDirectory)
+        terraform plan -out=tfplan
+      displayName: 'Terraform Plan'
+
+    - script: |
+        cd $(workingDirectory)
+        terraform apply tfplan
+      displayName: 'Terraform Apply'
